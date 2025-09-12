@@ -48,6 +48,12 @@ public class Plan {
 	@Column(name="CREATED_BY")
 	private String createdBy;
 	
+	@Column(name="MOBILE_NUMBER")
+	private String MobileNumber;
+	
+	@Column(name="EMAIL_ID")
+	private String emailId;
+	
 	@Column(name = "UPDATED_BY")
 	private String updateBy;
 	
