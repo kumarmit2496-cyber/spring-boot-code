@@ -3,6 +3,7 @@ package in.amitit.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import in.amitit.entity.LoginAttempt;
 import in.amitit.entity.Plan;
 import in.amitit.service.PlanService;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +30,11 @@ public class PalnRestController {
 	
 	@Autowired
 	private PlanService planService;
+	
+	
+	/*
+	 * @Autowired private UserRepository userRepository;
+	 */
 	
 	@GetMapping("/categories")
 	public ResponseEntity<Map<Integer, String>> planCategories(){
@@ -67,8 +74,56 @@ public class PalnRestController {
 					 
      }
 	
+		
+		/*
+		 * @PostMapping("/login") public ResponseEntity<?> login(@RequestBody User
+		 * loginRequest) { return
+		 * userRepository.findByUsername(loginRequest.getUsername()) .map(user -> { if
+		 * (user.getPassword().equals(loginRequest.getPassword())) { return
+		 * ResponseEntity.ok("Login Successful"); } else { return
+		 * ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Password"); } })
+		 * .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found")
+		 * ); }
+		 */
+		 
 
+	/*
+	 * @PostMapping("/Userlogin") public ResponseEntity<?> Userlogin(@RequestBody
+	 * User loginRequest) { return planService.login(loginRequest); }
+	 */
+      
+	  @PostMapping("/Register")
+	  public ResponseEntity<?> register(@RequestBody LoginAttempt newUser){
+		  Optional<LoginAttempt> existingUser=planService.findByUsername(newUser.getUsername());
+		  if(existingUser.isPresent()) {
+			  return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("UserName alreday exist");
+		  }
+			 
+		  planService.save(newUser);
+		  
+		return ResponseEntity.status(HttpStatus.CREATED).body("User Register Suceesfully");
+		  
+	  }
 	
+	  @PostMapping("/login")
+	  public ResponseEntity<?> login(@RequestBody LoginAttempt loginRequest){
+		   Optional<LoginAttempt>  userlogin=planService.findByUsername(loginRequest.getUsername());
+		   
+		   if(userlogin.isEmpty()) {
+			   return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found, Please register");
+		   }
+		   
+		   LoginAttempt user=userlogin.get();
+		   if(user.getPassword().equals(loginRequest.getPassword())) {
+			   return ResponseEntity.ok("Login Succesful");
+		   }
+		  else {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Inavlid Password");
+		}
+		  
+	  }
+	  
+	  
 
 	
 	 @PutMapping
