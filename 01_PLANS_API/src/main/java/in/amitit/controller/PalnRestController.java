@@ -7,7 +7,6 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -114,6 +113,10 @@ public class PalnRestController {
 		   }
 		   
 		   LoginAttempt user=userlogin.get();
+		   
+		   if(user.getPassword()==null||user.getPassword().trim().isEmpty()) {
+			   return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password is not avilable");
+		   }
 		   if(user.getPassword().equals(loginRequest.getPassword())) {
 			   return ResponseEntity.ok("Login Succesful");
 		   }
