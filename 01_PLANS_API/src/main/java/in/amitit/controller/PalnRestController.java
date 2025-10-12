@@ -20,11 +20,14 @@ import org.springframework.web.bind.annotation.RestController;
 import in.amitit.entity.LoginAttempt;
 import in.amitit.entity.Plan;
 import in.amitit.service.PlanService;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/plans")
 @CrossOrigin(origins = "http://localhost:4200")
+@Slf4j
 public class PalnRestController {
 	
 	@Autowired
@@ -37,6 +40,7 @@ public class PalnRestController {
 	
 	@GetMapping("/categories")
 	public ResponseEntity<Map<Integer, String>> planCategories(){
+		log.info("get All categories");
 		  Map<Integer, String> planCategories = planService.getPlanCategories();
 		  return new ResponseEntity<>(planCategories,HttpStatus.OK);
 	}
@@ -45,13 +49,15 @@ public class PalnRestController {
 	public ResponseEntity<List<Plan>> plans(){
 		 //  List<Plan> allPlans = planService.getAllPlans();
 		//   return new ResponseEntity<>(allPlans,HttpStatus.OK);
+		log.info("get All plan");
 		return ResponseEntity.ok(planService.getAllPlans());
 	}
 	
 	@GetMapping("/{planId}")
 	public ResponseEntity<Plan> getPlanById(@PathVariable Integer planId){
 		   //    Plan planById = planService.getPlanById(planId);
-		    //   return new ResponseEntity<>(planById,HttpStatus.OK);	
+		    //   return new ResponseEntity<>(planById,HttpStatus.OK);
+		log.info("get Plan By Id");
 		return ResponseEntity.ok(planService.getPlanById(planId));
 		
 	}
@@ -65,6 +71,7 @@ public class PalnRestController {
 			 * responseMsg="Plan Saved"; } else { responseMsg="Plan Not Saved"; }
 			 *   new ResponseEntity<>(responseMsg,HttpStatus.CREATED);
 			 */
+		log.info("saving the plans");
 		 boolean saved = planService.savePlan(plan);
 			   return saved
 					   ?new ResponseEntity<>("Plan Saved",HttpStatus.CREATED)
@@ -93,6 +100,7 @@ public class PalnRestController {
       
 	  @PostMapping("/Register")
 	  public ResponseEntity<?> register(@RequestBody LoginAttempt newUser){
+		  log.info("users are registering");
 		  Optional<LoginAttempt> existingUser=planService.findByUsername(newUser.getUsername());
 		  if(existingUser.isPresent()) {
 			  return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("UserName alreday exist");
@@ -106,6 +114,7 @@ public class PalnRestController {
 	
 	  @PostMapping("/login")
 	  public ResponseEntity<?> login(@RequestBody LoginAttempt loginRequest){
+		  log.info("usere login");
 		   Optional<LoginAttempt>  userlogin=planService.findByUsername(loginRequest.getUsername());
 		   
 		   if(userlogin.isEmpty()) {
@@ -131,6 +140,7 @@ public class PalnRestController {
 	
 	 @PutMapping
 	public ResponseEntity<String> updatePlan(@RequestBody Plan plan){
+		 log.info("users updating plan");
 		/*
 		 * boolean updatePlan = planService.updatePlan(plan); String msg="";
 		 * if(updatePlan) { msg="Plan Updated"; }else { msg="Plan not updated"; }
@@ -151,7 +161,7 @@ public class PalnRestController {
 		 * return new ResponseEntity<>(msg,HttpStatus.OK);
 		 */
 		 
-		 
+		   log.info("delete plan");
 		   boolean deleted = planService.deletePlanById(planId);
 		 return deleted
 				 ?ResponseEntity.ok("Plan Deleted")
@@ -171,7 +181,7 @@ public class PalnRestController {
 	}
 	return new ResponseEntity<>(msg,HttpStatus.OK);
 	}*/
-		
+		log.info("checking plans status");
 		  boolean changed = planService.planStatusChange(planId, status);
 		return changed
 				?ResponseEntity.ok("Status Chnaged")
